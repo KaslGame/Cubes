@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Spawner))]
 public class ObjectDetonator : MonoBehaviour
 {
     [SerializeField] private float _explosionRadius;
