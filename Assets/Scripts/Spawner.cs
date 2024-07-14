@@ -4,11 +4,12 @@ using UnityEngine.Events;
 
 public class Spawner : MonoBehaviour
 {
-    public event UnityAction<List<Rigidbody>> CubeSpawned;
-
     private int _maxCubesSpawn = 6;
     private int _minCubesSpawn = 2;
 
+    public event UnityAction<List<Rigidbody>> CubeSpawned;
+    public event UnityAction<Cube> CubeDestroyed;
+ 
     public void CreateCube(Cube parent)
     {
         if (parent.RandomNumberCheck())
@@ -33,6 +34,7 @@ public class Spawner : MonoBehaviour
         else
         {
             Destroy(parent.gameObject);
+            CubeDestroyed?.Invoke(parent);
         }
     }
 }
