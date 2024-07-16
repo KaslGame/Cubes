@@ -15,7 +15,6 @@ public class Cube : MonoBehaviour
     private void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
-
     }
 
     private void OnMouseDown()
