@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 public class Cube : MonoBehaviour
 {
-    [SerializeField] private Spawner _spawner;
+    [SerializeField] private CubeSpawner _spawner;
 
     public int GenerationAmount => _generationAmount;
 
@@ -15,23 +15,27 @@ public class Cube : MonoBehaviour
     private void Awake()
     {
         _meshRenderer = GetComponent<MeshRenderer>();
+
     }
 
     private void OnMouseDown()
     {
-        _spawner.CreateCube(this);
+        _spawner.TryCreateCube(this);
     }
 
-    public bool RandomNumberCheck()
+    public bool IsDivision()
     {
         int minChance = 0;
         int maxChance = 100;
         int randomNumber = Random.Range(minChance, maxChance);
 
-        if (randomNumber <= _chanceDivision / _generationAmount) return true; return false;
+        if (randomNumber <= _chanceDivision / _generationAmount) 
+            return true;
+
+        return false;
     }
 
-    public void NextGeneration(int generationAmount)
+    public void MakeNextGeneration(int generationAmount)
     {
         _generationAmount = generationAmount;
         gameObject.transform.localScale /= _generationAmount;

@@ -850,7 +850,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d09a1615cc2c004bade08388be4db4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _explosionRadius: 5
+  _explosionRadius: 2
   _explosionForce: 175
 --- !u!1 &1273155538
 GameObject:

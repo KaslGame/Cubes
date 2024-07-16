@@ -1,43 +1,50 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Spawner))]
+[RequireComponent(typeof(CubeSpawner))]
 public class ObjectDetonator : MonoBehaviour
 {
     [SerializeField] private float _explosionRadius;
     [SerializeField] private float _explosionForce;
 
-    private Spawner _spawner;
+    private CubeSpawner _spawner;
 
     private void Awake()
     {
-        _spawner = GetComponent<Spawner>();   
+        _spawner = GetComponent<CubeSpawner>();   
     }
 
     private void OnEnable()
     {
-        _spawner.CubeSpawned += OnCubeSpawned;
-        _spawner.CubeDestroyed += OnCubeDestroyed;
+        _spawner.StateCubeChanged += OnStateCubeChanged;
     }
 
     private void OnDisable()
     {
-        _spawner.CubeSpawned -= OnCubeSpawned;
-        _spawner.CubeDestroyed -= OnCubeDestroyed;
+        _spawner.StateCubeChanged -= OnStateCubeChanged;
     }
 
-    private void OnCubeSpawned(List<Rigidbody> needCubes)
+    private void OnStateCubeChanged(List<Rigidbody> needCubes, Cube cube)
     {
-        foreach (Rigidbody explodableObject in needCubes)
-            explodableObject.AddExplosionForce(_explosionForce, explodableObject.position, _explosionRadius);
+        int minCount = 0;
+
+        if (needCubes.Count > minCount)
+        {
+            Explode(needCubes, (needObject) => needObject.transform.position);
+        }
+        else
+        {
+            List<Rigidbody> cubes = GetExployedableCubes(cube.transform, cube.GenerationAmount);
+
+            Explode(cubes, (_) => cube.transform.position, cube.GenerationAmount);
+        }
     }
 
-    private void OnCubeDestroyed(Cube cube)
+    private void Explode(List<Rigidbody> cubes, Func<Rigidbody, Vector3> func,int multiplier = 1)
     {
-        foreach (Rigidbody explodableObject in GetExployedableCubes(cube.transform, cube.GenerationAmount))
-            explodableObject.AddExplosionForce(_explosionForce * cube.GenerationAmount, cube.transform.position, _explosionRadius * cube.GenerationAmount);
-
-        Debug.Log(transform.transform.position);
+        foreach (Rigidbody explodableObject in cubes)
+            explodableObject.AddExplosionForce(_explosionForce * multiplier, func.Invoke(explodableObject), _explosionRadius * multiplier);
     }
 
     private List<Rigidbody> GetExployedableCubes(Transform transform, int multiplier)
