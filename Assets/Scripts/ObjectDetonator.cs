@@ -17,39 +17,35 @@ public class ObjectDetonator : MonoBehaviour
 
     private void OnEnable()
     {
-        _spawner.StateCubeChanged += OnStateCubeChanged;
+        _spawner.CubeSpawned += OnCubeSpawned;
+        _spawner.CubeDestroed += OnCubeDestroed;
     }
 
     private void OnDisable()
     {
-        _spawner.StateCubeChanged -= OnStateCubeChanged;
+        _spawner.CubeSpawned -= OnCubeSpawned;
+        _spawner.CubeDestroed -= OnCubeDestroed;
     }
 
-    private void OnStateCubeChanged(List<Rigidbody> needCubes, Cube cube)
+    private void OnCubeSpawned(List<Rigidbody> needCubes, Cube cube)
     {
-        int minCount = 0;
-
-        if (needCubes.Count > minCount)
-        {
-            Explode(needCubes, (needObject) => needObject.transform.position);
-        }
-        else
-        {
-            List<Rigidbody> cubes = GetExployedableCubes(cube.transform, cube.GenerationAmount);
-
-            Explode(cubes, (_) => cube.transform.position, cube.GenerationAmount);
-        }
+        Explode(needCubes, cube.transform.position);
     }
 
-    private void Explode(List<Rigidbody> cubes, Func<Rigidbody, Vector3> func,int multiplier = 1)
+    private void OnCubeDestroed(Cube cube)
+    {
+        Explode(GetExployedableCubes(cube.transform.position, cube.GenerationAmount), cube.transform.position, cube.GenerationAmount);
+    }
+
+    private void Explode(List<Rigidbody> cubes, Vector3 postion, int multiplier = 1)
     {
         foreach (Rigidbody explodableObject in cubes)
-            explodableObject.AddExplosionForce(_explosionForce * multiplier, func.Invoke(explodableObject), _explosionRadius * multiplier);
+            explodableObject.AddExplosionForce(_explosionForce * multiplier, postion , _explosionRadius * multiplier);
     }
 
-    private List<Rigidbody> GetExployedableCubes(Transform transform, int multiplier)
+    private List<Rigidbody> GetExployedableCubes(Vector3 position, int multiplier)
     {
-        Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius * multiplier);
+        Collider[] hits = Physics.OverlapSphere(position, _explosionRadius * multiplier);
 
         List<Rigidbody> cubes = new();
 

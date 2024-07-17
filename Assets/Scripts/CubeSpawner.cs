@@ -7,31 +7,29 @@ public class CubeSpawner : MonoBehaviour
     private int _maxCubesSpawn = 6;
     private int _minCubesSpawn = 2;
 
-    public event UnityAction<List<Rigidbody>, Cube> StateCubeChanged;
+    public event UnityAction<List<Rigidbody>, Cube> CubeSpawned;
+    public event UnityAction<Cube> CubeDestroed;
  
     public void TryCreateCube(Cube parent)
     {
         if (parent.IsDivision())
         {
-            int generationAmount = 2;
-            int multiplier = 2;
             int randomCountSpawn = Random.Range(_minCubesSpawn, _maxCubesSpawn);
+
             List<Rigidbody> cubeList = new();
 
             for (int i = 0; i < randomCountSpawn; i++)
             {
                 Cube newCube = Instantiate(parent, parent.transform.position, Quaternion.identity);
-                newCube.MakeNextGeneration(generationAmount);
-                generationAmount *= multiplier;
+                newCube.MakeNextGeneration(parent.GenerationAmount);
                 cubeList.Add(newCube.GetComponent<Rigidbody>());
             }
 
-            StateCubeChanged?.Invoke(cubeList, parent);
+            CubeSpawned?.Invoke(cubeList, parent);
         }
         else
         {
-            List<Rigidbody> cubeList = new();
-            StateCubeChanged?.Invoke(cubeList, parent);
+            CubeDestroed?.Invoke(parent);
         }
 
         Destroy(parent.gameObject);

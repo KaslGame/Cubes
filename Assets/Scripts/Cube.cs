@@ -34,9 +34,9 @@ public class Cube : MonoBehaviour
         return false;
     }
 
-    public void MakeNextGeneration(int generationAmount)
+    public void MakeNextGeneration(int parentGeneration)
     {
-        _generationAmount = generationAmount;
+        _generationAmount = parentGeneration * 2;
         gameObject.transform.localScale /= _generationAmount;
         _meshRenderer.material.color = Random.ColorHSV(0f, 1f, 1f, 1f, 0.5f, 1f);
     }
